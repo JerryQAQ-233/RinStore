@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Payment Page</h1>
+        </div>
+
+        <div class="section-body">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Complete your payment</h4>
+                </div>
+                <div class="card-body">
+                    <p>订单号: <strong>{{ order_id }}</strong></p>
+                    <p>支付金额: <strong>${{ "%.2f" | format(amount | float) }}</strong></p>
+                    <p>This is a placeholder for your payment gateway integration.</p>
+                    <p>You would typically redirect to a third-party payment provider here.</p>
+                    <button class="btn btn-primary" id="simulatePayment">Simulate Successful Payment</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.getElementById('simulatePayment').addEventListener('click', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const confirmationId = urlParams.get('confirmation_id');
+
+        fetch('/callback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: 'success', confirmation_id: confirmationId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.href = '/'; // Redirect to dashboard after simulated payment
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Payment simulation failed.');
+        });
+    });
+</script>
+{% endblock %}

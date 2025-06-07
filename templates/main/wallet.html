@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Wallet
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <section class="section">
+    <div class="section-header">
+        <h1>Wallet</h1>
+    </div>
+
+    <div class="section-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Recharge History</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in recharge_history %}
+                                    <tr>
+                                        <td>{{ record.order_id }}</td>
+                                        <td>{{ record.amount }}</td>
+                                        <td>{{ record.status }}</td>
+                                        <td>{{ record.date }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Recharge</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="recharge-form">
+                            <div class="form-group">
+                                <label for="recharge-amount">Amount</label>
+                                <input type="number" class="form-control" id="recharge-amount" placeholder="Enter amount" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Recharge</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Redeem Code</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="redeem-form">
+                            <div class="form-group">
+                                <label for="redeem-code">Redemption Code</label>
+                                <input type="text" class="form-control" id="redeem-code" placeholder="Enter redemption code" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Redeem</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('recharge-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const amount = document.getElementById('recharge-amount').value;
+
+        fetch('/order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount: parseFloat(amount), type: 'recharge' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // alert('Recharge successful!'); // Remove this line
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    window.location.reload(); // Reload to show updated history
+                }
+            } else {
+                alert('Recharge failed: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during recharge.');
+        });
+    });
+
+    document.getElementById('redeem-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const redeemCode = document.getElementById('redeem-code').value;
+
+        fetch('/redeem', { // Assuming a new /redeem endpoint
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ code: redeemCode })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Redeem successful: ' + data.message);
+                window.location.reload(); // Reload to show updated balance/history
+            } else {
+                alert('Redeem failed: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during redemption.');
+        });
+    });
+</script>{% endblock %}

@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% set title = 'Products' %}
+
+{% block content %}
+<div class="main-content">
+    <div class="col-md">
+        <section class="section">
+            <style>
+                /* Custom CSS from test.html for payment methods and pricing */
+                .payment-method-item {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 15px;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 8px;
+                    margin-bottom: 10px;
+                    margin-right: 10px; /* Add some space between items */
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    vertical-align: top; /* Align items to the top */
+                }
+
+                .payment-method-item:hover {
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .payment-method-item.selected {
+                    border-color: #6777ef;
+                    background-color: #e6f7ff;
+                }
+
+                .payment-method-item img {
+                    width: 40px;
+                    height: 40px;
+                    margin-right: 15px;
+                }
+
+                .payment-method-item .method-info h6 {
+                    margin: 0;
+                    font-size: 1.1rem;
+                }
+
+                .payment-method-item .method-info p {
+                    margin: 0;
+                    font-size: 0.9rem;
+                    color: #666;
+                }
+
+                .pricing-item {
+                    border: 1px solid #e0e0e0;
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    text-align: center;
+                }
+
+                .pricing-item:hover {
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .pricing-item.selected {
+                    border-color: #6777ef;
+                    background-color: #e6f7ff;
+                }
+
+                .pricing-item .pricing-header h4 {
+                    margin-bottom: 10px;
+                    font-size: 1.5rem;
+                }
+
+                .pricing-item .pricing-price h2 {
+                    font-size: 2.5rem;
+                    margin-bottom: 10px;
+                }
+
+                .pricing-item .pricing-details ul {
+                    list-style: none;
+                    padding: 0;
+                    margin-bottom: 20px;
+                }
+
+                .pricing-item .pricing-details ul li {
+                    margin-bottom: 5px;
+                }
+
+                .buy-button {
+                    width: 100%;
+                }
+                .form-check-label {
+                    font-size: 1.2rem; /* Adjust as needed */
+                    margin-left: 0.5rem;
+                }
+            </style>
+
+            <div class="section-header">
+                <h1>购买商品</h1>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <div class="card" id="buy-page">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="section-title">选择商品</label>
+                                <div class="row" id="plan-list">
+                                    <!-- Product items will be dynamically loaded here or hardcoded -->
+                                    <div class="col-12 col-md-6">
+                                        <div class="pricing-item" data-plan-id="1" data-price="10.00">
+                                            <div class="pricing-header">
+                                                <h4>Class Widgets Pro</h4>
+                                            </div>
+                                            <div class="pricing-price">
+                                                <h2>$9.99</h2>
+                                            </div>
+                                            <div class="pricing-details">
+                                                <ul>
+                                                    <li><i class="fas fa-check"></i> 20GB 云存储</li>
+                                                    <li><i class="fas fa-check"></i> 体验更多功能</li>
+                                                    <li><i class="fas fa-check"></i> 优先服务功能</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="pricing-item" data-plan-id="2" data-price="20.00">
+                                            <div class="pricing-header">
+                                                <h4>RinUi 商业使用权限</h4>
+                                            </div>
+                                            <div class="pricing-price">
+                                                <h2>$29.99</h2>
+                                            </div>
+                                            <div class="pricing-details">
+                                                <ul>
+                                                    <li><i class="fas fa-check"></i> 提前体验新组件</li>
+                                                    <li><i class="fas fa-check"></i> 无限制发布商业项目</li>
+                                                    <li><i class="fas fa-check"></i> 优先问题支持</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="section-title">选择支付方式</label>
+                                <div id="payment-methods">
+                                    <div class="payment-method-item selected" data-method="alipay">
+                                        <img src="https://via.placeholder.com/40" alt="Alipay">
+                                        <div class="method-info">
+                                            <h6>支付宝</h6>
+                                            <p>推荐使用</p>
+                                        </div>
+                                    </div>
+                                    <div class="payment-method-item" data-method="wechatpay">
+                                        <img src="https://via.placeholder.com/40" alt="WeChat Pay">
+                                        <div class="method-info">
+                                            <h6>微信支付</h6>
+                                            <p>扫码支付</p>
+                                        </div>
+                                    </div>
+                                    <div class="payment-method-item" data-method="wallet">
+                                        <img src="https://via.placeholder.com/40" alt="Wallet">
+                                        <div class="method-info">
+                                            <h6>余额支付</h6>
+                                            <p>当前余额: $0.00</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">购买须知</label>
+                                <textarea class="form-control" rows="3" readonly>这里是购买须知，请仔细阅读。</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>订单详情</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">商品名称: <span id="order-product-name">未选择</span></li>
+                                <li class="list-group-item">总价: <span id="order-total-price">$0.00</span></li>
+                                <li class="list-group-item">优惠: <span id="order-discount">$0.00</span></li>
+                                <li class="list-group-item">余额支付: <span id="order-wallet-pay">$0.00</span></li>
+                                <li class="list-group-item">还需要支付: <span id="order-final-pay">$0.00</span></li>
+                            </ul>
+                            <button class="btn btn-primary mt-3 buy-button" id="pay-button" disabled>立即支付</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const planItems = document.querySelectorAll('.pricing-item');
+
+                    const paymentMethods = document.querySelectorAll('.payment-method-item');
+                    const payButton = document.getElementById('pay-button');
+
+                    const orderProductName = document.getElementById('order-product-name');
+                    const orderTotalPrice = document.getElementById('order-total-price');
+                    const orderDiscount = document.getElementById('order-discount');
+                    const orderWalletPay = document.getElementById('order-wallet-pay');
+                    const orderFinalPay = document.getElementById('order-final-pay');
+
+                    let selectedPlan = null;
+                    let selectedDuration = 1;
+                    let selectedPaymentMethod = 'alipay'; // Default selected
+
+                    function updateOrderDetails() {
+                        if (selectedPlan) {
+                            const basePrice = parseFloat(selectedPlan.dataset.price);
+                            const totalPrice = basePrice * selectedDuration;
+                            orderProductName.textContent = selectedPlan.querySelector('h4').textContent;
+                            orderTotalPrice.textContent = `$${totalPrice.toFixed(2)}`;
+                            // For now, discount and wallet pay are 0, can be implemented later
+                            orderDiscount.textContent = `$0.00`;
+                            orderWalletPay.textContent = `$0.00`;
+                            orderFinalPay.textContent = `$${totalPrice.toFixed(2)}`;
+                            payButton.disabled = false;
+                        } else {
+                            orderProductName.textContent = '未选择';
+                            orderTotalPrice.textContent = '$0.00';
+                            orderDiscount.textContent = '$0.00';
+                            orderWalletPay.textContent = '$0.00';
+                            orderFinalPay.textContent = '$0.00';
+                            payButton.disabled = true;
+                        }
+                    }
+
+                    planItems.forEach(item => {
+                        item.addEventListener('click', function() {
+                            planItems.forEach(p => p.classList.remove('selected'));
+                            this.classList.add('selected');
+                            selectedPlan = this;
+                            updateOrderDetails();
+                        });
+                    });
+
+
+
+                    paymentMethods.forEach(method => {
+                        method.addEventListener('click', function() {
+                            paymentMethods.forEach(m => m.classList.remove('selected'));
+                            this.classList.add('selected');
+                            selectedPaymentMethod = this.dataset.method;
+                        });
+                    });
+
+                    payButton.addEventListener('click', function() {
+                        if (selectedPlan) {
+                            const planId = selectedPlan.dataset.planId; // Get plan ID from data attribute
+                            fetch('/order', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    plan_id: planId,
+                                    duration: selectedDuration // selectedDuration is fixed to 1
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.redirect_url) {
+                                    window.location.href = data.redirect_url;
+                                } else {
+                                    alert('订单创建失败: ' + (data.message || '未知错误'));
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('请求失败: ' + error.message);
+                            });
+                        } else {
+                            alert('请选择一个商品。');
+                        }
+                    });
+
+                    // Initialize order details if a plan is pre-selected or default
+                    if (planItems.length > 0) {
+                        planItems[0].click(); // Select the first plan by default
+                    }
+                });
+            </script>
+        </section>
+    </div>
+</div>
+{% endblock %}
