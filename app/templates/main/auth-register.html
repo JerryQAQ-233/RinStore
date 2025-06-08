@@ -1,12 +1,12 @@
-{% set title = 'Login' %}
-{% set page = 'auth-login.html' %}
+{% set title = 'Register' %}
+{% set page = 'auth-register.html' %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>RinStore</title>
+  <title>RinStore - Register</title>
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"
@@ -14,13 +14,10 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
     integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
-
-
   <!-- Template CSS -->
   <link rel="stylesheet" href="{{ url_for ('static', filename='css/style.css') }}">
   <link rel="stylesheet" href="{{ url_for ('static', filename='css/components.css') }}">
   <link rel="stylesheet" href="{{ url_for ('static', filename='css/custom.css') }}">
-  <!-- <link rel="stylesheet" href="{{ url_for ('static', filename='assets/css/bootstrap.min.css') }}"> -->
 </head>
 
 <body>
@@ -35,7 +32,7 @@
             </div>
 
             <div class="card card-primary">
-              <div class="card-header"><h4>Login</h4></div>
+              <div class="card-header"><h4>Register</h4></div>
 
               <div class="card-body">
                 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -45,7 +42,7 @@
                     {% endfor %}
                   {% endif %}
                 {% endwith %}
-                <form method="POST" action="{{ url_for('auth.login') }}" class="needs-validation" novalidate="">
+                <form method="POST" action="{{ url_for('auth.register') }}" class="needs-validation" novalidate="">
                   {{ form.hidden_tag() }}
                   <div class="form-group">
                     {{ form.username.label(class="control-label") }}
@@ -62,14 +59,7 @@
                   </div>
 
                   <div class="form-group">
-                    <div class="d-block">
-                      {{ form.password.label(class="control-label") }}
-                      <div class="float-right">
-                        <a href="{{ url_for('auth.forgot_password') }}" class="text-small">
-                          Forgot Password?
-                        </a>
-                      </div>
-                    </div>
+                    {{ form.password.label(class="control-label") }}
                     {{ form.password(class="form-control", tabindex="2") }}
                     {% if form.password.errors %}
                       <div class="invalid-feedback d-block">
@@ -82,13 +72,19 @@
                     {% endif %}
                   </div>
 
-                  {# We can add 'Remember Me' back if it's added to the FlaskForm #}
-                  {# <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                      <input type="checkbox" name="remember" class="custom-control-input" tabindex="3" id="remember-me">
-                      <label class="custom-control-label" for="remember-me">Remember Me</label>
+                  <div class="form-group">
+                    {{ form.confirm_password.label(class="control-label") }}
+                    {{ form.confirm_password(class="form-control", tabindex="3") }}
+                    {% if form.confirm_password.errors %}
+                      <div class="invalid-feedback d-block">
+                        {% for error in form.confirm_password.errors %}{{ error }}{% endfor %}
+                      </div>
+                    {% else %}
+                    <div class="invalid-feedback">
+                      Please confirm your password
                     </div>
-                  </div> #}
+                    {% endif %}
+                  </div>
 
                   <div class="form-group">
                     {{ form.submit(class="btn btn-primary btn-lg btn-block", tabindex="4") }}
@@ -96,7 +92,7 @@
                 </form>
             </div>
             <div class="text-muted text-center">
-              Don't have an account? <a href="{{ url_for('auth.register') }}">Create One</a>
+              Already have an account? <a href="{{ url_for('auth.login') }}">Login</a>
             </div>
             <div class="simple-footer">
               Copyright &copy; RinStore 2025
@@ -120,16 +116,9 @@
   <script src="https://cdn.bootcdn.net/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
   <script src="{{ url_for ('static', filename='js/rinstore.js') }}"></script>
 
-
   <!-- Template JS File -->
   <script src="{{ url_for ('static', filename='js/scripts.js') }}"></script>
   <script src="{{ url_for ('static', filename='js/custom.js') }}"></script>
 
-  <!-- Page Specific JS File -->
-  <!-- <script src="{{ url_for ('static', filename='assets/js/page/index-0.js') }}"></script> -->
-  <!-- <script src="{{ url_for ('static', filename='assets/js/page/bootstrap.modal.js') }}"></script> -->
-  <!-- <script src="{{ url_for ('static', filename='assets/js/jquery.js') }}"></script> -->
-  <!-- <script src="{{ url_for ('static', filename='assets/js/bootstrap.min.js') }}"></script> -->
 </body>
-
 </html>
