@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, request
 from flask import Blueprint, render_template, redirect, url_for, request
-from flask_login import login_required
+from flask_login import login_required,current_user
 
 from .data_manager import *
 routes_bp = Blueprint('routes', __name__)
@@ -8,7 +8,8 @@ routes_bp = Blueprint('routes', __name__)
 @routes_bp.route('/')
 @login_required
 def index():
-    return render_template('main/index.html')
+    user_balance = current_user.balance
+    return render_template('main/index.html', user_balance=user_balance)
 
 @routes_bp.route('/products')
 @login_required
@@ -28,7 +29,7 @@ def recharge():
         amount = float(request.form['amount'])
 
         order_id = f"recharge_{current_user.id}_{len(data_manager.get_recharge_history()) + 1}"
-        data_manager.add_recharge_history(order_id, amount, 'success')
+        data_manager.add_recharge_history(current_user.id, order_id, amount, 'success')
         flash(f'成功充值 {amount} 元！', 'success')
         return redirect(url_for('routes.recharge_history'))
     return render_template('main/recharge.html')
@@ -36,7 +37,8 @@ def recharge():
 @routes_bp.route('/recharge_history')
 @login_required
 def recharge_history():
-    history = data_manager.get_recharge_history()
+    all_history = data_manager.get_recharge_history()
+    history = [item for item in all_history if item.get('user_id') == current_user.id]
     return render_template('main/recharge_history.html', history=history)
 
 @routes_bp.route('/redeem', methods=['GET', 'POST'])

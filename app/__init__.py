@@ -22,4 +22,8 @@ def create_app(SECRET_KEY):
     app.register_blueprint(payment_bp)
     app.register_blueprint(auth_bp)
 
+    @app.template_filter('format_currency')
+    def format_currency_filter(value):
+        return f"{value:.2f}"
+
     return app

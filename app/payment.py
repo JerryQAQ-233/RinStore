@@ -51,6 +51,7 @@ def payment_callback():
             if order['confirmation_id'] == confirmation_id:
                 order['status'] = 'paid'
                 print(f"Order {order['order_id']} with confirmation ID {confirmation_id} paid successfully!")
+                config_app.del_recharge_history(order['order_id'])
                 config_app.add_recharge_history(order['order_id'], order['amount'], 'paid')
                 unpaid_orders.remove(order)
                 config_app.save_unpaid_orders(unpaid_orders)

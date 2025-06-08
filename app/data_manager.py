@@ -57,10 +57,11 @@ class DataManager:
     def save_redeem_codes(self, codes):
         self._save_data(self.redeem_codes_file, codes)
 
-    def add_recharge_history(self, order_id, amount, status):
+    def add_recharge_history(self, user_id, order_id, amount, status):
         """添加充值历史记录的通用函数"""
         recharge_history = self.get_recharge_history()
         recharge_history.append({
+            'user_id': user_id,
             'order_id': order_id,
             'amount': amount,
             'status': status,
@@ -68,6 +69,11 @@ class DataManager:
         })
         self.save_recharge_history(recharge_history)
 
+    def del_recharge_history(self, order_id):
+        """删除充值历史记录的通用函数"""
+        recharge_history = self.get_recharge_history()
+        recharge_history = [item for item in recharge_history if item.get('order_id') != order_id]
+        self.save_recharge_history(recharge_history)
     def get_users(self):
         return self._load_data(self.users_file)
 

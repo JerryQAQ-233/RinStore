@@ -1,6 +1,7 @@
 [
     {
         "id": "test",
-        "password_hash": "pbkdf2:sha256:600000$dzp00vwHDl121xnQ$43e6231088068afd182695948e46c660b5794ca2cf3b5af7bb609fc6608d9238"
+        "password_hash": "pbkdf2:sha256:600000$dzp00vwHDl121xnQ$43e6231088068afd182695948e46c660b5794ca2cf3b5af7bb609fc6608d9238",
+        "balance": 1.14
     }
 ]
