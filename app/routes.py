@@ -41,7 +41,7 @@ def recharge_history():
     history = [item for item in all_history if item.get('user_id') == current_user.id]
     return render_template('main/recharge_history.html', history=history)
 
-@routes_bp.route('/redeem', methods=['GET', 'POST'])
+@routes_bp.route('/redeem', methods=['POST'])
 @login_required
 def redeem():
     if request.method == 'POST':
@@ -55,50 +55,3 @@ def redeem():
                 return redirect(url_for('routes.index'))
         flash('无效或已使用的兑换码！', 'danger')
         return redirect(url_for('routes.redeem'))
-    return render_template('main/redeem.html')
-
-@routes_bp.route('/admin/unpaid_orders')
-@login_required
-def admin_unpaid_orders():
-    if current_user.id != 'admin':  # Simple admin check
-        flash('Unauthorized access.', 'danger')
-        return redirect(url_for('routes.index'))
-    orders = data_manager.get_unpaid_orders()
-    return render_template('main/admin_unpaid_orders.html', orders=orders)
-
-@routes_bp.route('/admin/mark_paid/<order_id>')
-@login_required
-def admin_mark_paid(order_id):
-    if current_user.id != 'admin':
-        flash('Unauthorized access.', 'danger')
-        return redirect(url_for('routes.index'))
-    orders = data_manager.get_unpaid_orders()
-    orders = [order for order in orders if order['order_id'] != order_id]
-    data_manager.save_unpaid_orders(orders)
-    flash(f'订单 {order_id} 已标记为已支付。', 'success')
-    return redirect(url_for('routes.admin_unpaid_orders'))
-
-@routes_bp.route('/admin/add_redeem_code', methods=['GET', 'POST'])
-@login_required
-def admin_add_redeem_code():
-    if current_user.id != 'admin':
-        flash('Unauthorized access.', 'danger')
-        return redirect(url_for('routes.index'))
-    if request.method == 'POST':
-        code = request.form['code']
-        value = float(request.form['value'])
-        redeem_codes = data_manager.get_redeem_codes()
-        redeem_codes.append({'code': code, 'value': value, 'used': False})
-        data_manager.save_redeem_codes(redeem_codes)
-        flash(f'兑换码 {code} 已添加。', 'success')
-        return redirect(url_for('routes.admin_add_redeem_code'))
-    return render_template('main/admin_add_redeem_code.html')
-
-@routes_bp.route('/admin/users')
-@login_required
-def admin_users():
-    if current_user.id != 'admin':
-        flash('Unauthorized access.', 'danger')
-        return redirect(url_for('routes.index'))
-    users = data_manager.get_users()
-    return render_template('main/admin_users.html', users=users)

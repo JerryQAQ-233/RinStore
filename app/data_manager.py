@@ -14,12 +14,14 @@ class DataManager:
         self.recharge_history_file = os.path.join(self.data_dir, 'recharge_history.json')
         self.redeem_codes_file = os.path.join(self.data_dir, 'redeem_codes.json')
         self.users_file = os.path.join(self.data_dir, 'users.json')
+        self.product_prices_file = os.path.join(self.data_dir, 'product_prices.json')
         
         # Initialize all data files
         self.get_unpaid_orders()
         self.get_recharge_history()
         self.get_redeem_codes()
         self.get_users()
+        self.get_product_prices()
 
     def _load_data(self, filepath):
         if os.path.exists(filepath):
@@ -27,8 +29,8 @@ class DataManager:
                 try:
                     return json.load(f)
                 except json.JSONDecodeError:
-                    return []
-        return []
+                    return {}
+        return {}
 
     def _save_data(self, filepath, data):
         with open(filepath, 'w') as f:
@@ -79,6 +81,21 @@ class DataManager:
 
     def save_users(self, users):
         self._save_data(self.users_file, users)
+
+    def get_product_prices(self):
+        default_prices = {
+            1: 10.00,
+            2: 20.00
+        }
+        prices = self._load_data(self.product_prices_file)
+        if not prices:
+            self._save_data(self.product_prices_file, default_prices)
+            return default_prices
+        # Ensure keys are integers
+        return {int(k): v for k, v in prices.items()}
+
+    def save_product_prices(self, prices):
+        self._save_data(self.product_prices_file, prices)
 
 
 global_app = DataManager()

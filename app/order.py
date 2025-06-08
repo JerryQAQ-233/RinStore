@@ -1,5 +1,6 @@
 from flask import jsonify, url_for
 import uuid
+from flask_login import current_user
 
 from .data_manager import global_app as config_app
 
@@ -55,7 +56,10 @@ class OrderCreator:
     def create_product_order(self):
         """创建产品订单"""
         plan_id = self.data.get('plan_id')
-        amount = 10.00 if plan_id == 1 else 20.00 # 我勒个硬编码啊
+        product_prices = config_app.get_product_prices()
+        amount = product_prices.get(plan_id)
+        if amount is None:
+            return jsonify({'success': False, 'message': 'Invalid plan ID.'}), 400
         self.create_base_order(amount, 'product', plan_id)
         print(f"Unpaid product order created: {self.order_id} with confirmation ID {self.confirmation_id}")
         return self.get_redirect_response()
@@ -65,7 +69,7 @@ class OrderCreator:
         amount = self.data.get('amount')
         if amount and amount > 0:
             self.create_base_order(amount, 'recharge')
-            config_app.add_recharge_history(self.order_id, amount, 'unpaid')
+            config_app.add_recharge_history(current_user.id, self.order_id, amount, 'unpaid')
             print(f"Unpaid recharge order created: {self.order_id} with confirmation ID {self.confirmation_id}")
             return self.get_redirect_response('Recharge successful!')
         return jsonify({'success': False, 'message': 'Invalid amount.'}), 400
@@ -83,4 +87,11 @@ class OrderCreator:
         return jsonify({'success': False, 'message': 'Invalid order type.'}), 400
 
 if __name__ == '__main__':
-    OrderCreator()
+    # This block is for testing purposes. In a real application, data would come from a request.
+    dummy_data = {
+        'type': 'product',
+        'plan_id': 1
+    }
+    creator = OrderCreator(dummy_data)
+    # You might want to call creator.process() here to test the flow
+    print("OrderCreator initialized with dummy data.")

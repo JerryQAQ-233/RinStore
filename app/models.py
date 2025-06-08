@@ -23,3 +23,12 @@ class User(UserMixin):
         users = data_manager.get_users()
         users.append({'id': user_id, 'password_hash': password_hash, 'balance': balance})
         data_manager.save_users(users)
+
+    @staticmethod
+    def update_password(user_id, new_password_hash):
+        users = data_manager.get_users()
+        for user_data in users:
+            if user_data['id'] == user_id:
+                user_data['password_hash'] = new_password_hash
+                break
+        data_manager.save_users(users)

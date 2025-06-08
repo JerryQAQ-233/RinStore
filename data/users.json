@@ -3,5 +3,15 @@
         "id": "test",
         "password_hash": "pbkdf2:sha256:600000$dzp00vwHDl121xnQ$43e6231088068afd182695948e46c660b5794ca2cf3b5af7bb609fc6608d9238",
         "balance": 1.14
+    },
+    {
+        "id": "114",
+        "password_hash": "pbkdf2:sha256:600000$Xu13aEL8NhDeXewo$cfc1a933d60d11499f3baf7de907c93276dbe7d46c153fb5448d9135998f2d7c",
+        "balance": 0.0
+    },
+    {
+        "id": "23",
+        "password_hash": "pbkdf2:sha256:600000$zpsZMQ5OCRenyYl5$0744f1c8068faad4d45e913ae121c4903fd2e6b521ae21f3d8205f5a963d33ab",
+        "balance": 0.0
     }
 ]
