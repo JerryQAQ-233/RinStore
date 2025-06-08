@@ -1,3 +1,3 @@
-# Stisla Flask
+# RinStore
 
-这是一个基于 Stisla 模板的 Flask 项目。
+这是一个基于 RinStore 模板的 Flask 项目。

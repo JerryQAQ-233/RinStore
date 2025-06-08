@@ -1,6 +1,8 @@
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+from .data_manager import DataManager
 
-from .data_manager import get_users, save_users
+data_manager = DataManager()
 
 class User(UserMixin):
     def __init__(self, id, password_hash):
@@ -9,7 +11,7 @@ class User(UserMixin):
 
     @staticmethod
     def get(user_id):
-        users = get_users()
+        users = data_manager.get_users()
         for user_data in users:
             if user_data['id'] == user_id:
                 return User(user_data['id'], user_data['password_hash'])
@@ -17,6 +19,6 @@ class User(UserMixin):
 
     @staticmethod
     def create_user(user_id, password_hash):
-        users = get_users()
+        users = data_manager.get_users()
         users.append({'id': user_id, 'password_hash': password_hash})
-        save_users(users)
+        data_manager.save_users(users)

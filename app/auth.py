@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
+from .data_manager import DataManager
 
 auth_bp = Blueprint('auth', __name__)
+data_manager = DataManager()
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -27,7 +29,6 @@ def login():
                 login_user(user)
                 return redirect(url_for('routes.index'))
             return render_template('main/auth-login.html', error='Invalid credentials')
-    return render_template('main/auth-login.html')
 
 @auth_bp.route('/logout')
 @login_required

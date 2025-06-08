@@ -1,76 +1,78 @@
-'''神人gemini写的依托,等我想改的时候再改,反正能跑就行,对吧?'''
-from datetime import datetime
 import json
 import os
+from datetime import datetime
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+class DataManager:
+    def __init__(self):
+        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+        
+        # Ensure the data directory exists
+        if not os.path.exists(self.data_dir):
+            os.makedirs(self.data_dir)
+            
+        self.unpaid_orders_file = os.path.join(self.data_dir, 'unpaid_orders.json')
+        self.recharge_history_file = os.path.join(self.data_dir, 'recharge_history.json')
+        self.redeem_codes_file = os.path.join(self.data_dir, 'redeem_codes.json')
+        self.users_file = os.path.join(self.data_dir, 'users.json')
+        
+        # Initialize all data files
+        self.get_unpaid_orders()
+        self.get_recharge_history()
+        self.get_redeem_codes()
+        self.get_users()
 
-# Ensure the data directory exists
-if not os.path.exists(DATA_DIR):
-    os.makedirs(DATA_DIR)
+    def _load_data(self, filepath):
+        if os.path.exists(filepath):
+            with open(filepath, 'r') as f:
+                try:
+                    return json.load(f)
+                except json.JSONDecodeError:
+                    return []
+        return []
 
-UNPAID_ORDERS_FILE = os.path.join(DATA_DIR, 'unpaid_orders.json')
-RECHARGE_HISTORY_FILE = os.path.join(DATA_DIR, 'recharge_history.json')
-REDEEM_CODES_FILE = os.path.join(DATA_DIR, 'redeem_codes.json')
-USERS_FILE = os.path.join(DATA_DIR, 'users.json')
+    def _save_data(self, filepath, data):
+        with open(filepath, 'w') as f:
+            json.dump(data, f, indent=4)
 
-def load_data(filepath):
-    if os.path.exists(filepath):
-        with open(filepath, 'r') as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                return []
-    return []
+    def get_unpaid_orders(self):
+        return self._load_data(self.unpaid_orders_file)
 
-def save_data(filepath, data):
-    with open(filepath, 'w') as f:
-        json.dump(data, f, indent=4)
+    def save_unpaid_orders(self, orders):
+        self._save_data(self.unpaid_orders_file, orders)
 
-def get_unpaid_orders():
-    return load_data(UNPAID_ORDERS_FILE)
+    def get_recharge_history(self):
+        return self._load_data(self.recharge_history_file)
 
-def save_unpaid_orders(orders):
-    save_data(UNPAID_ORDERS_FILE, orders)
+    def save_recharge_history(self, history):
+        self._save_data(self.recharge_history_file, history)
 
-def get_recharge_history():
-    return load_data(RECHARGE_HISTORY_FILE)
+    def get_redeem_codes(self):
+        default_codes = []
+        codes = self._load_data(self.redeem_codes_file)
+        if not codes:
+            self._save_data(self.redeem_codes_file, default_codes)
+            return default_codes
+        return codes
 
-def save_recharge_history(history):
-    save_data(RECHARGE_HISTORY_FILE, history)
+    def save_redeem_codes(self, codes):
+        self._save_data(self.redeem_codes_file, codes)
 
-def get_redeem_codes():
-    # Example: Initial hardcoded redeem codes, will be loaded from JSON
-    # In a real application, these would be managed via an admin interface
-    default_codes = []
-    codes = load_data(REDEEM_CODES_FILE)
-    if not codes:
-        save_data(REDEEM_CODES_FILE, default_codes)
-        return default_codes
-    return codes
+    def add_recharge_history(self, order_id, amount, status):
+        """添加充值历史记录的通用函数"""
+        recharge_history = self.get_recharge_history()
+        recharge_history.append({
+            'order_id': order_id,
+            'amount': amount,
+            'status': status,
+            'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        })
+        self.save_recharge_history(recharge_history)
 
-def save_redeem_codes(codes):
-    save_data(REDEEM_CODES_FILE, codes)
+    def get_users(self):
+        return self._load_data(self.users_file)
 
-def add_recharge_history(order_id, amount, status):
-    """添加充值历史记录的通用函数"""
-    recharge_history = get_recharge_history()
-    recharge_history.append({
-        'order_id': order_id,
-        'amount': amount,
-        'status': status,
-        'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    })
-    save_recharge_history(recharge_history)
+    def save_users(self, users):
+        self._save_data(self.users_file, users)
 
-def get_users():
-    return load_data(USERS_FILE)
 
-def save_users(users):
-    save_data(USERS_FILE, users)
-
-# Initialize data files if they don't exist
-get_unpaid_orders()
-get_recharge_history()
-get_redeem_codes()
-get_users()
+global_app = DataManager()
