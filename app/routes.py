@@ -34,13 +34,6 @@ def recharge():
         return redirect(url_for('routes.recharge_history'))
     return render_template('main/recharge.html')
 
-@routes_bp.route('/recharge_history')
-@login_required
-def recharge_history():
-    all_history = data_manager.get_recharge_history()
-    history = [item for item in all_history if item.get('user_id') == current_user.id]
-    return render_template('main/recharge_history.html', history=history)
-
 @routes_bp.route('/redeem', methods=['POST'])
 @login_required
 def redeem():
