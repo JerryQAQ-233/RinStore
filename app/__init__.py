@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 from .models import User
 from .routes import routes_bp
 from .payment import payment_bp
@@ -7,6 +8,7 @@ from .auth import auth_bp
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
+csrf = CSRFProtect()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -17,6 +19,7 @@ def create_app(SECRET_KEY):
     app.config['SECRET_KEY'] = SECRET_KEY
 
     login_manager.init_app(app)
+    csrf.init_app(app)
 
     app.register_blueprint(routes_bp)
     app.register_blueprint(payment_bp)
