@@ -29,6 +29,7 @@ def login():
                 login_user(user)
                 return redirect(url_for('routes.index'))
             return render_template('main/auth-login.html', error='Invalid credentials')
+    return render_template('main/auth-login.html')
 
 @auth_bp.route('/logout')
 @login_required
