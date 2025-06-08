@@ -254,35 +254,33 @@
                         });
                     });
 
-                    payButton.addEventListener('click', function() {
-                        if (selectedPlan) {
-                            const planId = selectedPlan.dataset.planId; // Get plan ID from data attribute
-                            fetch('/order', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    plan_id: planId,
-                                    duration: selectedDuration // selectedDuration is fixed to 1
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.redirect_url) {
-                                    window.location.href = data.redirect_url;
-                                } else {
-                                    alert('订单创建失败: ' + (data.message || '未知错误'));
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('请求失败: ' + error.message);
-                            });
-                        } else {
-                            alert('请选择一个商品。');
-                        }
-                    });
+                document.getElementById('pay-button').addEventListener('click', function() {
+                    const selectedPlan = document.querySelector('.pricing-item.selected');
+                    if (selectedPlan) {
+                        const planId = selectedPlan.dataset.planId;
+                        fetch('/order', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ type: 'product', plan_id: parseInt(planId) })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.redirect_url) {
+                                window.location.href = data.redirect_url;
+                            } else {
+                                alert(data.message || '订单创建失败。');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('订单创建过程中发生错误。');
+                        });
+                    } else {
+                        alert('请选择一个商品。');
+                    }
+                });
 
                     // Initialize order details if a plan is pre-selected or default
                     if (planItems.length > 0) {

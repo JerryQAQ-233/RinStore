@@ -68,13 +68,13 @@
         <ul class="sidebar-menu">
             <li class="menu-header">Dashboard</li>
             <li class="nav-item dropdown">
-                <a href="{{ url_for('index') }}" class="nav-link"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+                <a href="{{ url_for('routes.index') }}" class="nav-link"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item dropdown">
-                <a href="{{ url_for('products') }}" class="nav-link"><i class="fas fa-boxes"></i><span>Products</span></a>
+                <a href="{{ url_for('routes.products') }}" class="nav-link"><i class="fas fa-boxes"></i><span>Products</span></a>
             </li>
             <li class="nav-item dropdown">
-                <a href="{{ url_for('wallet') }}" class="nav-link"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+                <a href="{{ url_for('routes.wallet') }}" class="nav-link"><i class="fas fa-wallet"></i><span>Wallet</span></a>
             </li>
         </ul>
         <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
