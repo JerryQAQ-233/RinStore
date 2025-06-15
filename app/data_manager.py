@@ -59,14 +59,13 @@ class DataManager:
     def save_redeem_codes(self, codes):
         self._save_data(self.redeem_codes_file, codes)
 
-    def add_recharge_history(self, user_id, order_id, amount, status):
+    def add_recharge_history(self, user_id, order_id, amount):
         """添加充值历史记录的通用函数"""
         recharge_history = self.get_recharge_history()
         recharge_history.append({
             'user_id': user_id,
             'order_id': order_id,
             'amount': amount,
-            'status': status,
             'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         })
         self.save_recharge_history(recharge_history)
@@ -81,6 +80,14 @@ class DataManager:
 
     def save_users(self, users):
         self._save_data(self.users_file, users)
+
+    def update_user_balance(self, user_id, amount):
+        users = self.get_users()
+        if user_id in users:
+            users[user_id]['balance'] = float(users[user_id].get('balance', 0)) + amount
+            self.save_users(users)
+            return True
+        return False
 
     def get_product_prices(self):
         default_prices = {

@@ -69,7 +69,7 @@ class OrderCreator:
         amount = self.data.get('amount')
         if amount and amount > 0:
             self.create_base_order(amount, 'recharge')
-            config_app.add_recharge_history(current_user.id, self.order_id, amount, 'unpaid')
+            config_app.add_recharge_history(current_user.id, self.order_id, amount)
             print(f"Unpaid recharge order created: {self.order_id} with confirmation ID {self.confirmation_id}")
             return self.get_redirect_response('Recharge successful!')
         return jsonify({'success': False, 'message': 'Invalid amount.'}), 400

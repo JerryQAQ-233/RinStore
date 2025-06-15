@@ -19,8 +19,9 @@ def products():
 @routes_bp.route('/wallet')
 @login_required
 def wallet():
-    recharge_history = global_app.get_recharge_history()
-    return render_template('main/wallet.html', recharge_history=recharge_history)
+    all_recharge_history = global_app.get_recharge_history()
+    user_recharge_history = [record for record in all_recharge_history if record.get('user_id') == current_user.id]
+    return render_template('main/wallet.html', recharge_history=user_recharge_history)
 
 @routes_bp.route('/recharge', methods=['GET', 'POST'])
 @login_required
@@ -29,7 +30,7 @@ def recharge():
         amount = float(request.form['amount'])
 
         order_id = f"recharge_{current_user.id}_{len(data_manager.get_recharge_history()) + 1}"
-        data_manager.add_recharge_history(current_user.id, order_id, amount, 'success')
+        data_manager.add_recharge_history(current_user.id, order_id, amount)
         flash(f'成功充值 {amount} 元！', 'success')
         return redirect(url_for('routes.recharge_history'))
     return render_template('main/recharge.html')

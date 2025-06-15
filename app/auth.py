@@ -24,7 +24,7 @@ def login():
             # In a real application, you would have a registration process
             if not user:
                 hashed_password = generate_password_hash(password)
-                User.create_user(username, hashed_password)
+                User.create_user(username, username, hashed_password)
                 user = User.get(username)
                 login_user(user)
                 return redirect(url_for('routes.index'))
@@ -48,7 +48,7 @@ def register():
             return render_template('main/auth-register.html', error='Username already exists')
         
         hashed_password = generate_password_hash(password)
-        User.create_user(username, hashed_password)
+        User.create_user(username, username, hashed_password)
         user = User.get(username)
         login_user(user)
         return redirect(url_for('routes.index'))

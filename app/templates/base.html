@@ -34,18 +34,9 @@
       </form>
       <ul class="navbar-nav navbar-right">
         <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-          <img alt="image" src="{{ url_for ('static', filename='media/img/avatar/avatar-1.png') }}" class="rounded-circle mr-1">
-          <div class="d-sm-none d-lg-inline-block">Hi, {{ current_user.username if current_user.is_authenticated else 'Guest' }}</div></a>
+          <img alt="image" src="https://secure.gravatar.com/avatar/{{ current_user.get_username()}}?d=retro" class="rounded-circle mr-1">
+          <div class="d-sm-none d-lg-inline-block">Hi, {{ current_user.get_username() if current_user.is_authenticated else 'Guest' }}</div></a>
           <div class="dropdown-menu dropdown-menu-right">
-            <div class="dropdown-title">Logged in 5 min ago</div>
-            <a href="#" class="dropdown-item has-icon">
-              <i class="far fa-user"></i> Profile
-            </a>
-
-            <a href="#" class="dropdown-item has-icon">
-              <i class="fas fa-cog"></i> Settings
-            </a>
-            <div class="dropdown-divider"></div>
             <a href="{{ url_for('auth.logout') }}" class="dropdown-item has-icon text-danger">
               <i class="fas fa-sign-out-alt"></i> Logout
             </a>
@@ -77,11 +68,6 @@
                 <a href="{{ url_for('routes.wallet') }}" class="nav-link"><i class="fas fa-wallet"></i><span>Wallet</span></a>
             </li>
         </ul>
-        <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
-            <a href="https://getrinstore.com/docs" class="btn btn-primary btn-lg btn-block btn-icon-split">
-                <i class="fas fa-rocket"></i> Documentation
-            </a>
-        </div>
     </aside>
   </div>
   {% endblock sidebar %}

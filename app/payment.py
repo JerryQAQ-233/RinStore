@@ -52,11 +52,12 @@ def payment_callback():
                 order['status'] = 'paid'
                 print(f"Order {order['order_id']} with confirmation ID {confirmation_id} paid successfully!")
                 config_app.del_recharge_history(order['order_id'])
-                config_app.add_recharge_history(current_user.id, order['order_id'], order['amount'], 'paid')
-                unpaid_orders.remove(order)
-                config_app.save_unpaid_orders(unpaid_orders)
-                return jsonify({'message': 'Payment successful and balance topped up!'})
-        return jsonify({'message': 'Order not found or already paid.'}, 404)
+                config_app.add_recharge_history(current_user.id, order['order_id'], order['amount'])
+        config_app.update_user_balance(str(current_user.id), order['amount'])
+        unpaid_orders.remove(order)
+        config_app.save_unpaid_orders(unpaid_orders)
+        return jsonify({'message': 'Payment successful and balance topped up!'})
+    return jsonify({'message': 'Order not found or already paid.'}, 404)
     return jsonify({'message': 'Invalid callback data.'}, 400)
 
 @payment_bp.route('/redeem', methods=['POST'])
@@ -73,7 +74,8 @@ def redeem_code():
             redeem_code_obj['used'] = True
             config_app.save_redeem_codes(redeem_codes)
             print(f"User {current_user.id} redeemed code {code} for {redeem_amount}")
-            config_app.add_recharge_history(current_user.id, f'REDEEM-{code}', redeem_amount, 'redeemed')
-            return jsonify({'success': True, 'message': f'Successfully redeemed {redeem_amount}!'})
+            config_app.add_recharge_history(current_user.id, f'REDEEM-{code}', redeem_amount)
+        config_app.update_user_balance(str(current_user.id), redeem_amount)
+        return jsonify({'success': True, 'message': f'Successfully redeemed {redeem_amount}!'})
     
     return jsonify({'success': False, 'message': 'Invalid or expired redemption code.'}), 400
