@@ -28,3 +28,6 @@ venv/
 *.swp
 *~
 .DS_Store
+
+# data
+app/data/

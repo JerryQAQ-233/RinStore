@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+import requests
 
 class DataManager:
     def __init__(self):
@@ -24,17 +25,50 @@ class DataManager:
         self.get_product_prices()
 
     def _load_data(self, filepath):
-        if os.path.exists(filepath):
-            with open(filepath, 'r') as f:
-                try:
-                    return json.load(f)
-                except json.JSONDecodeError:
-                    return {}
+        vec_secret = os.getenv('VEC_SECRET')
+        if vec_secret:
+            # Determine the key name based on the filepath
+            file_basename = os.path.basename(filepath)
+            # Remove .json extension to get the key name
+            key_name = os.path.splitext(file_basename)[0]
+            
+            # Construct the Edge Config URL
+            # Assuming the Edge Config ID is also available as an environment variable or hardcoded if it's constant
+            # For this example, let's assume the Edge Config ID is part of VEC_SECRET or another env var
+            # For simplicity, let's assume VEC_SECRET is the full connection string for now
+            # In a real scenario, you'd use the @vercel/edge-config SDK or parse the connection string
+            
+            # For direct HTTP request, we need the Edge Config ID and a read access token.
+            # Let's assume VEC_SECRET is the read access token and EDGE_CONFIG_ID is another env var.
+            edge_config_id = os.getenv('EDGE_CONFIG_ID')
+            if not edge_config_id:
+                print("Error: EDGE_CONFIG_ID environment variable not set for Edge Config.")
+                return {}
+
+            edge_config_url = f"https://edge-config.vercel.com/{edge_config_id}/item/{key_name}"
+            headers = {"Authorization": f"Bearer {vec_secret}"}
+            
+            try:
+                response = requests.get(edge_config_url, headers=headers)
+                response.raise_for_status() # Raise an exception for HTTP errors
+                return response.json()
+            except requests.exceptions.RequestException as e:
+                print(f"Error fetching from Edge Config for {key_name}: {e}")
+                return {}
+        else:
+            if os.path.exists(filepath):
+                with open(filepath, 'r') as f:
+                    try:
+                        return json.load(f)
+                    except json.JSONDecodeError:
+                        return {}
         return {}
 
     def _save_data(self, filepath, data):
-        with open(filepath, 'w') as f:
-            json.dump(data, f, indent=4)
+        vec_secret = os.getenv('VEC_SECRET')
+        if not vec_secret: # Only save to local file if VEC_SECRET is not set
+            with open(filepath, 'w') as f:
+                json.dump(data, f, indent=4)
 
     def get_unpaid_orders(self):
         return self._load_data(self.unpaid_orders_file)
@@ -50,6 +84,8 @@ class DataManager:
 
     def get_redeem_codes(self):
         default_codes = []
+        # If VEC_SECRET is set, _load_data will handle fetching from Edge Config
+        # Otherwise, it will load from local file
         codes = self._load_data(self.redeem_codes_file)
         if not codes:
             self._save_data(self.redeem_codes_file, default_codes)
@@ -94,6 +130,8 @@ class DataManager:
             1: 10.00,
             2: 20.00
         }
+        # If VEC_SECRET is set, _load_data will handle fetching from Edge Config
+        # Otherwise, it will load from local file
         prices = self._load_data(self.product_prices_file)
         if not prices:
             self._save_data(self.product_prices_file, default_prices)
